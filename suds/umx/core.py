@@ -23,6 +23,7 @@ from suds.umx import *
 from suds.umx.attrlist import AttrList
 from suds.sax.text import Text
 from suds.sudsobject import Factory, merge
+import unicodedata
 
 
 reserved = {'class':'cls', 'def':'dfn'}
@@ -137,6 +138,11 @@ class Core:
             cont = Content(child)
             cval = self.append(cont)
             key = reserved.get(child.name, child.name)
+
+            # converte the key to ASCII
+            key = ''.join(c for c in unicodedata.normalize('NFD', key)
+                          if unicodedata.category(c) != 'Mn')
+
             if key in content.data:
                 v = getattr(content.data, key)
                 if isinstance(v, list):
